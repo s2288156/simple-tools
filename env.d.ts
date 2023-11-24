@@ -6,3 +6,5 @@ declare module '*.vue' {
 }
 
 declare module 'leaflet';
+declare module 'leaflet-gpx';
+declare module 'fs';
