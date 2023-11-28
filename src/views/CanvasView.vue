@@ -21,27 +21,25 @@ const testLine = (ctx: any) => {
   ctx.lineTo(100, 100)
   ctx.stroke()
 }
-
+let ctx: CanvasRenderingContext2D
 onMounted(() => {
-  let ctx = c.value.getContext('2d')
+  ctx = c.value.getContext('2d')
   // testLine(ctx)
-  ctx.arc(100, 100, 30, 0, 360 * Math.PI / 180)
-  ctx.closePath()
-  ctx.stroke()
+  ctx.fillStyle = 'rgb(200,0,0)'
+  ctx.fillRect(10, 10, 55, 50)
+
+  ctx.fillStyle = 'rgb(0,0,200,0.5)'
+  ctx.fillRect(30, 30, 70, 100)
 })
-
-
 </script>
 <template>
-  <canvas ref="c" class="canvas1"> </canvas>
+  <canvas ref="c" class="canvas1" width="1000" height="800"> </canvas>
 </template>
 
 <style>
 .canvas1 {
   display: flex;
   justify-content: center;
-  width: 300px;
-  height: 150px;
   margin: 1px auto;
   background-color: antiquewhite;
   border: 1px solid black;
