@@ -2,7 +2,15 @@
 import { onMounted, ref } from 'vue'
 
 let c = ref()
-const testLine = (ctx: any) => {
+
+let ctx: CanvasRenderingContext2D
+onMounted(() => {
+  ctx = c.value.getContext('2d')
+  // drawLine(ctx)
+  // drawBezierCurve(ctx)
+})
+
+const drawLine = (ctx: any) => {
   ctx.lineWidth = 8
   ctx.strokeStyle = 'pink'
   ctx.lineCap = 'round'
@@ -21,16 +29,17 @@ const testLine = (ctx: any) => {
   ctx.lineTo(100, 100)
   ctx.stroke()
 }
-let ctx: CanvasRenderingContext2D
-onMounted(() => {
-  ctx = c.value.getContext('2d')
-  // testLine(ctx)
-  ctx.fillStyle = 'rgb(200,0,0)'
-  ctx.fillRect(10, 10, 55, 50)
+const drawBezierCurve = (ctx: CanvasRenderingContext2D) => {
+  ctx.beginPath()
+  ctx.moveTo(100, 100)
+  ctx.quadraticCurveTo(200, 100, 200, 200)
+  ctx.stroke()
 
-  ctx.fillStyle = 'rgb(0,0,200,0.5)'
-  ctx.fillRect(30, 30, 70, 100)
-})
+  ctx.beginPath()
+  ctx.moveTo(300, 300)
+  ctx.bezierCurveTo(550, 300, 400, 500,500, 500)
+  ctx.stroke()
+}
 </script>
 <template>
   <canvas ref="c" class="canvas1" width="1000" height="800"> </canvas>
