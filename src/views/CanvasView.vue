@@ -132,17 +132,44 @@ const drawImage = (ctx: CanvasRenderingContext2D) => {
   }
   img.src = '/src/assets/images/td.png'
 }
+const drawSaveRestore = (ctx: CanvasRenderingContext2D) => {
+  ctx.beginPath()
+  ctx.fillStyle = '#8c8c8c'
+  ctx.fillRect(100, 100, 200, 200)
+  ctx.save()
+
+  ctx.fillStyle = '#ff4d4f'
+  ctx.fillRect(120, 120, 160, 160)
+  ctx.save()
+
+  ctx.fillStyle = '#ff9c6e'
+  ctx.fillRect(140, 140, 120, 120)
+
+  ctx.restore()
+  ctx.fillRect(160, 160, 80, 80)
+
+  ctx.restore()
+  ctx.fillRect(180, 180, 40, 40)
+}
+const drawTranslateRect = (ctx: CanvasRenderingContext2D) => {
+  ctx.translate(100, 100)
+  ctx.fillRect(0, 0, 100, 100)
+  ctx.translate(100, 100)
+  ctx.fillRect(0, 0, 100, 100)
+}
 </script>
 <template>
   <div class="canvas-header">
+    <button @click="cleanCanvas(ctx)">cleanCanvas</button>
     <button @click="drawLine(ctx)">drawLine</button>
     <button @click="drawBezierCurve(ctx)">drawBezierCurve</button>
     <button @click="drawForPath2D(ctx)">drawForPath2D</button>
     <button @click="drawStyle(ctx)">drawStyle</button>
     <button @click="drawLineDash(ctx)">drawLineDash</button>
-    <button @click="cleanCanvas(ctx)">cleanCanvas</button>
     <button @click="drawFillText(ctx)">drawFillText</button>
     <button @click="drawImage(ctx)">drawImage</button>
+    <button @click="drawSaveRestore(ctx)">drawSaveRestore</button>
+    <button @click="drawTranslateRect(ctx)">drawTranslateRect</button>
   </div>
   <canvas ref="c" class="canvas1" :width="width" :height="height"></canvas>
 </template>
