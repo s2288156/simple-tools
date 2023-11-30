@@ -1,16 +1,13 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import {onMounted, ref} from 'vue'
 
+const width = ref(1000)
+const height = ref(800)
 let c = ref()
 
 let ctx: CanvasRenderingContext2D
 onMounted(() => {
   ctx = c.value.getContext('2d')
-  // drawLine(ctx)
-  // drawBezierCurve(ctx)
-  // drawForPath2D(ctx)
-  // drawStyle(ctx)
-  drawLineDash(ctx)
 })
 
 const drawLine = (ctx: any) => {
@@ -40,7 +37,7 @@ const drawBezierCurve = (ctx: CanvasRenderingContext2D) => {
 
   ctx.beginPath()
   ctx.moveTo(300, 300)
-  ctx.bezierCurveTo(550, 300, 400, 500,500, 500)
+  ctx.bezierCurveTo(550, 300, 400, 500, 500, 500)
   ctx.stroke()
 }
 const drawForPath2D = (ctx: CanvasRenderingContext2D) => {
@@ -100,21 +97,66 @@ const drawLineDash = (ctx: CanvasRenderingContext2D) => {
   }
 
   const march = () => {
-    offset ++
+    offset++
     if (offset > 16) {
       offset = 0
     }
     draw()
-    setTimeout(march, 20)
+    setTimeout(march, 20);
   }
-  march()
+  // march()
+  draw()
+}
+const cleanCanvas = (ctx: CanvasRenderingContext2D) => {
+  ctx.beginPath()
+  ctx.setLineDash([0, 0])
+  ctx.globalAlpha = 1
+  ctx.clearRect(0, 0, width.value, height.value)
+}
+const drawFillText = (ctx: CanvasRenderingContext2D) => {
+  ctx.beginPath()
+  ctx.font = '50px Arial'
+  ctx.fillText('Hello World', 100, 100)
+  ctx.strokeText('Hello World', 100, 150)
+}
+const drawImage = (ctx: CanvasRenderingContext2D) => {
+  let img = new Image()
+  img.onload = () => {
+    ctx.drawImage(img, 0, 0)
+    ctx.beginPath();
+    ctx.moveTo(30, 96);
+    ctx.lineTo(70, 66);
+    ctx.lineTo(103, 76);
+    ctx.lineTo(170, 15);
+    ctx.stroke();
+  }
+  img.src = '/src/assets/images/td.png'
 }
 </script>
 <template>
-  <canvas ref="c" class="canvas1" width="1000" height="800"> </canvas>
+  <div class="canvas-header">
+    <button @click="drawLine(ctx)">drawLine</button>
+    <button @click="drawBezierCurve(ctx)">drawBezierCurve</button>
+    <button @click="drawForPath2D(ctx)">drawForPath2D</button>
+    <button @click="drawStyle(ctx)">drawStyle</button>
+    <button @click="drawLineDash(ctx)">drawLineDash</button>
+    <button @click="cleanCanvas(ctx)">cleanCanvas</button>
+    <button @click="drawFillText(ctx)">drawFillText</button>
+    <button @click="drawImage(ctx)">drawImage</button>
+  </div>
+  <canvas ref="c" class="canvas1" :width="width" :height="height"></canvas>
 </template>
 
-<style>
+<style scoped lang="scss">
+.canvas-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  button {
+    padding: 5px 5px;
+    margin: 2px
+  }
+}
 .canvas1 {
   display: flex;
   justify-content: center;
