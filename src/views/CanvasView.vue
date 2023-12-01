@@ -176,28 +176,60 @@ const drawClockAnimations = (ctx: CanvasRenderingContext2D) => {
   ctx.translate(500, 200)
   ctx.save()
 
-  ctx.lineWidth = 3
-  ctx.arc(0, 0, 100, 0, Math.PI * 2, true)
-  ctx.stroke()
+  function drawDialPlate() {
+    ctx.lineWidth = 3
+    ctx.arc(0, 0, 100, 0, Math.PI * 2, true)
+    ctx.stroke()
 
-  const sin5 = Math.sin(Math.PI / 30);
-  const cos5 = Math.cos(Math.PI / 30);
-  let hourLine = new Path2D();
-  hourLine.moveTo(0, -95)
-  hourLine.lineTo(0, -85)
-  let minuteLine = new Path2D();
-  minuteLine.moveTo(0, -95)
-  minuteLine.lineTo(0, -90)
-  for (let i = 0; i < 60; i++) {
-    if (i % 5 === 0) {
-      ctx.lineWidth = 2
-      ctx.stroke(hourLine);
-    } else {
-      ctx.lineWidth = 1
-      ctx.stroke(minuteLine);
+    const sin5 = Math.sin(Math.PI / 30);
+    const cos5 = Math.cos(Math.PI / 30);
+    let hourLine = new Path2D();
+    hourLine.moveTo(0, -95)
+    hourLine.lineTo(0, -85)
+    let minuteLine = new Path2D();
+    minuteLine.moveTo(0, -95)
+    minuteLine.lineTo(0, -90)
+    for (let i = 0; i < 60; i++) {
+      if (i % 5 === 0) {
+        ctx.lineWidth = 2
+        ctx.stroke(hourLine);
+      } else {
+        ctx.lineWidth = 1
+        ctx.stroke(minuteLine);
+      }
+      ctx.transform(cos5, sin5, -sin5, cos5, 0, 0);
     }
-    ctx.transform(cos5, sin5, -sin5, cos5, 0, 0);
   }
+  function drawWatchHand() {
+    let hourHand = new Path2D();
+    hourHand.moveTo(0, 10)
+    hourHand.lineTo(0, -70)
+    ctx.strokeStyle = 'black'
+    ctx.lineWidth = 5
+    ctx.stroke(hourHand);
+
+    let minuteHand = new Path2D();
+    minuteHand.moveTo(0, 15)
+    minuteHand.lineTo(0, -80)
+    ctx.strokeStyle = '#d4b106'
+    ctx.lineWidth = 3
+    ctx.stroke(minuteHand);
+
+    let secondHand = new Path2D();
+    secondHand.moveTo(0, 20)
+    secondHand.lineTo(0, -90)
+    ctx.strokeStyle = 'red'
+    ctx.lineWidth = 1
+    ctx.stroke(secondHand);
+
+    ctx.beginPath()
+    ctx.fillStyle = 'red'
+    ctx.arc(0, 0, 4, 0, Math.PI * 2, true)
+    ctx.fill()
+  }
+
+  drawDialPlate();
+  drawWatchHand()
 }
 </script>
 <template>
