@@ -4,6 +4,7 @@ import {onMounted, ref} from 'vue'
 const width = ref(1000)
 const height = ref(800)
 let c = ref()
+const timeoutIds: number[] = []
 
 let ctx: CanvasRenderingContext2D
 onMounted(() => {
@@ -158,27 +159,44 @@ const drawTranslateRect = (ctx: CanvasRenderingContext2D) => {
   ctx.fillRect(0, 0, 100, 100)
 }
 const drawClipRect = (ctx: CanvasRenderingContext2D) => {
-  ctx.fillRect(0, 0, 150, 150)
-  ctx.translate(75, 75)
+  ctx.fillStyle = '#d9d9d9'
+  ctx.fillRect(200, 200, 150, 150)
 
-  ctx.beginPath()
-  ctx.arc(0, 0, 60, 0, Math.PI * 2, true)
+  ctx.arc(275, 275, 75, 0, Math.PI * 2, true)
+  // clip后，后面的绘制都会被裁剪掉
   ctx.clip()
 
-  let lingrad = ctx.createLinearGradient(0, -75, 0, 75)
-  lingrad.addColorStop(0,'#232256')
-  lingrad.addColorStop(1,'#143778')
+  ctx.clearRect(0, 0, width.value, height.value)
+  ctx.clip()
+  ctx.beginPath()
+  ctx.fillStyle = '#ff9c6e'
+  ctx.fillRect(210, 210, 130, 130)
+}
+const drawClockAnimations = (ctx: CanvasRenderingContext2D) => {
+  ctx.translate(500, 200)
+  ctx.save()
 
-  ctx.fillStyle = lingrad;
-  ctx.fillRect(-75, -75, 150, 150);
+  ctx.lineWidth = 3
+  ctx.arc(0, 0, 100, 0, Math.PI * 2, true)
+  ctx.stroke()
 
-  for (let i = 1; i < 50; i++) {
-    ctx.save()
-    ctx.fillStyle = `rgb(${i * 5}, 255, ${255 - i * 5})`
-    ctx.translate(Math.random() * 100 - 50, Math.random() * 100 - 50)
-    ctx.rotate(Math.random() * 2 * Math.PI)
-    ctx.fillRect(0, 0, 10, 10)
-    ctx.restore()
+  const sin5 = Math.sin(Math.PI / 30);
+  const cos5 = Math.cos(Math.PI / 30);
+  let hourLine = new Path2D();
+  hourLine.moveTo(0, -95)
+  hourLine.lineTo(0, -85)
+  let minuteLine = new Path2D();
+  minuteLine.moveTo(0, -95)
+  minuteLine.lineTo(0, -90)
+  for (let i = 0; i < 60; i++) {
+    if (i % 5 === 0) {
+      ctx.lineWidth = 2
+      ctx.stroke(hourLine);
+    } else {
+      ctx.lineWidth = 1
+      ctx.stroke(minuteLine);
+    }
+    ctx.transform(cos5, sin5, -sin5, cos5, 0, 0);
   }
 }
 </script>
@@ -195,6 +213,7 @@ const drawClipRect = (ctx: CanvasRenderingContext2D) => {
     <button @click="drawSaveRestore(ctx)">drawSaveRestore</button>
     <button @click="drawTranslateRect(ctx)">drawTranslateRect</button>
     <button @click="drawClipRect(ctx)">drawClipRect</button>
+    <button @click="drawClockAnimations(ctx)">drawClockAnimations</button>
   </div>
   <canvas ref="c" class="canvas1" :width="width" :height="height"></canvas>
 </template>
@@ -204,11 +223,13 @@ const drawClipRect = (ctx: CanvasRenderingContext2D) => {
   display: flex;
   justify-content: center;
   align-items: center;
+
   button {
     padding: 5px 5px;
     margin: 2px
   }
 }
+
 .canvas1 {
   display: flex;
   justify-content: center;
