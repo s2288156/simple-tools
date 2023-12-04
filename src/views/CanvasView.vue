@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import {onMounted, ref} from 'vue'
 
-const width = ref(1000)
-const height = ref(800)
+const width = ref(innerWidth)
+const height = ref(innerHeight - 100)
 let c = ref()
 const timeoutIds: number[] = []
 
@@ -173,14 +173,13 @@ const drawClipRect = (ctx: CanvasRenderingContext2D) => {
   ctx.fillRect(210, 210, 130, 130)
 }
 const drawClockAnimations = (ctx: CanvasRenderingContext2D) => {
-  ctx.translate(500, 200)
   function clock() {
-    ctx.clearRect(-500,-200, width.value, height.value)
+    ctx.clearRect(0, 0, width.value, height.value)
     ctx.save()
+    ctx.translate(500, 200)
     ctx.lineWidth = 3
     ctx.arc(0, 0, 100, 0, Math.PI * 2, true)
     ctx.stroke()
-    ctx.restore()
 
     // hour marks
     ctx.save()
@@ -221,7 +220,7 @@ const drawClockAnimations = (ctx: CanvasRenderingContext2D) => {
     hourHand.lineTo(0, -70)
     ctx.strokeStyle = '#141414'
     ctx.lineWidth = 5
-    ctx.rotate(Math.PI * 2 * hr / 12)
+    ctx.rotate(Math.PI * 2 * hr / 12 + Math.PI * 2 * min / 60 / 12)
     ctx.stroke(hourHand);
     ctx.restore()
 
@@ -255,10 +254,31 @@ const drawClockAnimations = (ctx: CanvasRenderingContext2D) => {
     circleCenter.arc(0, 0, 4, 0, Math.PI * 2, true)
     ctx.fill(circleCenter)
     ctx.restore()
+    ctx.restore()
     window.requestAnimationFrame(clock)
   }
 
   window.requestAnimationFrame(clock)
+}
+const drawMouseFollow = (ctx: CanvasRenderingContext2D) => {
+  const m = {
+    x: width.value / 2,
+    y: height.value / 2,
+  }
+  const draw = () => {
+    ctx.clearRect(0, 0, width.value, height.value)
+    ctx.beginPath()
+    ctx.arc(m.x, m.y, 10, 0, Math.PI * 2, false)
+    ctx.fillStyle = '#f5222d'
+    ctx.fill()
+    window.requestAnimationFrame(draw)
+  }
+
+  window.onmousemove = (e) => {
+    m.x = e.clientX
+    m.y = e.clientY - 35
+  }
+  draw()
 }
 </script>
 <template>
@@ -275,6 +295,7 @@ const drawClockAnimations = (ctx: CanvasRenderingContext2D) => {
     <button @click="drawTranslateRect(ctx)">drawTranslateRect</button>
     <button @click="drawClipRect(ctx)">drawClipRect</button>
     <button @click="drawClockAnimations(ctx)">drawClockAnimations</button>
+    <button @click="drawMouseFollow(ctx)">drawMouseFollow</button>
   </div>
   <canvas ref="c" class="canvas1" :width="width" :height="height"></canvas>
 </template>
