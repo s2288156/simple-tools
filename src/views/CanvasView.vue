@@ -174,62 +174,91 @@ const drawClipRect = (ctx: CanvasRenderingContext2D) => {
 }
 const drawClockAnimations = (ctx: CanvasRenderingContext2D) => {
   ctx.translate(500, 200)
-  ctx.save()
-
-  function drawDialPlate() {
+  function clock() {
+    ctx.clearRect(-500,-200, width.value, height.value)
+    ctx.save()
     ctx.lineWidth = 3
     ctx.arc(0, 0, 100, 0, Math.PI * 2, true)
     ctx.stroke()
+    ctx.restore()
 
-    const sin5 = Math.sin(Math.PI / 30);
-    const cos5 = Math.cos(Math.PI / 30);
+    // hour marks
+    ctx.save()
     let hourLine = new Path2D();
     hourLine.moveTo(0, -95)
     hourLine.lineTo(0, -85)
+    ctx.lineWidth = 2
+
+    for (let i = 0; i < 12; i++) {
+      ctx.beginPath()
+      ctx.rotate(Math.PI / 6)
+      ctx.stroke(hourLine)
+    }
+    ctx.restore()
+
+    // minute marks
+    ctx.save()
     let minuteLine = new Path2D();
     minuteLine.moveTo(0, -95)
     minuteLine.lineTo(0, -90)
+    ctx.lineWidth = 1
     for (let i = 0; i < 60; i++) {
-      if (i % 5 === 0) {
-        ctx.lineWidth = 2
-        ctx.stroke(hourLine);
-      } else {
-        ctx.lineWidth = 1
-        ctx.stroke(minuteLine);
-      }
-      ctx.transform(cos5, sin5, -sin5, cos5, 0, 0);
+      ctx.beginPath()
+      ctx.rotate(Math.PI / 30)
+      ctx.stroke(minuteLine)
     }
-  }
-  function drawWatchHand() {
+    ctx.restore()
+
+    const now = new Date()
+    let sec = now.getSeconds()
+    let min = now.getMinutes()
+    let hr = now.getHours()
+
+    // write hour
+    ctx.save()
     let hourHand = new Path2D();
     hourHand.moveTo(0, 10)
     hourHand.lineTo(0, -70)
-    ctx.strokeStyle = 'black'
+    ctx.strokeStyle = '#141414'
     ctx.lineWidth = 5
+    ctx.rotate(Math.PI * 2 * hr / 12)
     ctx.stroke(hourHand);
+    ctx.restore()
 
+    // write minute
+    ctx.save()
     let minuteHand = new Path2D();
     minuteHand.moveTo(0, 15)
     minuteHand.lineTo(0, -80)
     ctx.strokeStyle = '#d4b106'
     ctx.lineWidth = 3
+    ctx.rotate(Math.PI * 2 * min / 60)
     ctx.stroke(minuteHand);
+    ctx.restore()
 
+    // write second
+    ctx.save()
     let secondHand = new Path2D();
     secondHand.moveTo(0, 20)
     secondHand.lineTo(0, -90)
-    ctx.strokeStyle = 'red'
+    ctx.strokeStyle = '#f5222d'
     ctx.lineWidth = 1
+    ctx.rotate(Math.PI * 2 * sec / 60)
     ctx.stroke(secondHand);
+    ctx.restore()
 
+
+    ctx.save()
     ctx.beginPath()
-    ctx.fillStyle = 'red'
-    ctx.arc(0, 0, 4, 0, Math.PI * 2, true)
-    ctx.fill()
+    ctx.fillStyle = '#f5222d'
+    const circleCenter = new Path2D();
+    circleCenter.arc(0, 0, 4, 0, Math.PI * 2, true)
+    ctx.fill(circleCenter)
+    ctx.restore()
+    window.requestAnimationFrame(clock)
   }
 
-  drawDialPlate();
-  drawWatchHand()
+  window.requestAnimationFrame(clock)
 }
 </script>
 <template>
