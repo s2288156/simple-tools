@@ -280,6 +280,28 @@ const drawMouseFollow = (ctx: CanvasRenderingContext2D) => {
   }
   draw()
 }
+const drawAdvanceAnimations = (ctx: CanvasRenderingContext2D) => {
+  const ball = {
+    x: 50,
+    y: 50,
+    vx: 4,
+    vy: 2,
+    draw() {
+      ctx.beginPath()
+      ctx.arc(this.x, this.y, 40, 0, Math.PI * 2, false)
+      ctx.fillStyle = '#5f4321'
+      ctx.fill()
+    },
+  }
+  const draw = () => {
+    ctx.clearRect(0, 0, width.value, height.value)
+    ball.x += ball.vx
+    ball.y += ball.vy
+    ball.draw()
+    window.requestAnimationFrame(draw)
+  }
+  draw()
+}
 </script>
 <template>
   <div class="canvas-header">
@@ -296,6 +318,7 @@ const drawMouseFollow = (ctx: CanvasRenderingContext2D) => {
     <button @click="drawClipRect(ctx)">drawClipRect</button>
     <button @click="drawClockAnimations(ctx)">drawClockAnimations</button>
     <button @click="drawMouseFollow(ctx)">drawMouseFollow</button>
+    <button @click="drawAdvanceAnimations(ctx)">drawAdvanceAnimations</button>
   </div>
   <canvas ref="c" class="canvas1" :width="width" :height="height"></canvas>
 </template>
