@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import {onMounted, ref} from 'vue'
+import {onMounted, ref, watch} from 'vue'
 
-const width = ref(innerWidth)
-const height = ref(innerHeight - 100)
+const width = ref(1000)
+const height = ref(800)
 let c = ref()
 const timeoutIds: number[] = []
 
@@ -281,26 +281,60 @@ const drawMouseFollow = (ctx: CanvasRenderingContext2D) => {
   draw()
 }
 const drawAdvanceAnimations = (ctx: CanvasRenderingContext2D) => {
+  let raf: number;
+  let running = false;
   const ball = {
     x: 50,
     y: 50,
     vx: 4,
-    vy: 2,
+    vy: 8,
     draw() {
       ctx.beginPath()
       ctx.arc(this.x, this.y, 40, 0, Math.PI * 2, false)
-      ctx.fillStyle = '#5f4321'
+      ctx.closePath()
+      ctx.fillStyle = 'rgba(95, 67, 33)'
       ctx.fill()
     },
   }
-  const draw = () => {
-    ctx.clearRect(0, 0, width.value, height.value)
-    ball.x += ball.vx
-    ball.y += ball.vy
-    ball.draw()
-    window.requestAnimationFrame(draw)
+
+  // 添加透明度style，cleanRect换为fillRect，实现长尾效果
+  function clear() {
+    ctx.fillStyle = "rgba(255, 255, 255, 0.3)";
+    ctx.fillRect(0, 0, width.value, height.value);
   }
-  draw()
+
+  const draw = () => {
+    clear();
+    ball.draw()
+    ball.x += ball.vx;
+    ball.y += ball.vy;
+    if (ball.x + ball.vx > width.value || ball.x + ball.vx < 0) {
+      ball.vx = -ball.vx;
+    }
+    if (ball.y + ball.vy > height.value || ball.y + ball.vy < 0) {
+      ball.vy = -ball.vy;
+    }
+    raf = window.requestAnimationFrame(draw)
+  }
+  c.value.addEventListener('mousemove', (e: MouseEvent) => {
+    if (!running) {
+      clear()
+      ball.x = e.offsetX
+      ball.y = e.offsetY
+      ball.draw()
+    }
+  })
+  c.value.addEventListener('mouseout', () => {
+    window.cancelAnimationFrame(raf)
+    running = false
+  })
+  c.value.addEventListener('click', () => {
+    if (!running) {
+      raf = window.requestAnimationFrame(draw)
+      running = true
+    }
+  })
+  ball.draw()
 }
 </script>
 <template>
