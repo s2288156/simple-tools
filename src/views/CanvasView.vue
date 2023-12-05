@@ -122,16 +122,23 @@ const drawFillText = (ctx: CanvasRenderingContext2D) => {
 }
 const drawImage = (ctx: CanvasRenderingContext2D) => {
   let img = new Image()
+  img.src = '/src/assets/images/td.png'
   img.onload = () => {
     ctx.drawImage(img, 0, 0)
-    ctx.beginPath();
-    ctx.moveTo(30, 96);
-    ctx.lineTo(70, 66);
-    ctx.lineTo(103, 76);
-    ctx.lineTo(170, 15);
-    ctx.stroke();
   }
-  img.src = '/src/assets/images/td.png'
+
+  c.value.addEventListener('mousemove', (event: MouseEvent) => {
+    ctx.clearRect(400, 100, 400, 400)
+    ctx.beginPath()
+    let x = event.offsetX
+    let y = event.offsetY
+    let pixel = ctx.getImageData(x, y, 1, 1)
+    const rgba = `rgba(${pixel.data[0]},${pixel.data[1]},${pixel.data[2]},${pixel.data[3]/255})`
+    ctx.save()
+    ctx.fillStyle = rgba
+    ctx.fillRect(400, 100, 400, 400)
+    ctx.restore()
+  })
 }
 const drawSaveRestore = (ctx: CanvasRenderingContext2D) => {
   ctx.beginPath()
